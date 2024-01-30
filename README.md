@@ -1,2 +1,3 @@
 # Background-Changer-App
-A background changer app for windows using svelte and electron *IN PROGRESS*
+A background changer app for windows using svelte and electron 
+Project is under construction
