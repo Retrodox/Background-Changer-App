@@ -24,7 +24,7 @@
 	}
 </script>
 
-<main style="background-color: transparent;">
+<div class="app-background">
 	<Topbar />
 	<h1 class="title">Background Changer</h1>
 	<div class="line" style="background-color: {color1};"></div>
@@ -36,10 +36,10 @@
 	</div>
 	<button>Select Pictures Folder</button>
 	<button on:click={exitApp}>Exit</button>
-</main>
+</div>
 
 <style>
-	main {
+	.app-background {
 		border-radius: 10px;
 		position: fixed; /* Position it relative to the viewport */
 		top: 0; /* Stick it to the top */
@@ -49,13 +49,14 @@
 		text-align: center;
 		padding: 0; /* Set padding to 0 */
 		margin: 0; /* Set margin to 0 */
-		background-color:#000000;  /* Updated Light blue background */
+		background-color:#C4E1F1;  /* Updated Light blue background */
 		user-select: none; /* Prevent text selection */
 		display: flex; /* Use flexbox layout */
 		flex-direction: column; /* Stack children vertically */
 		justify-content: flex-start; /* Align children to the top */
 		align-items: center; /* Center children horizontally */
 		box-sizing: border-box; /* Include padding in the width and height */
+		border: 5px solid #3949ab; /* Add border line with color #3949ab and size 1px */
 	}
 
 	.title {
@@ -94,7 +95,7 @@
 	}
 
 	@media (min-width: 640px) {
-		main {
+		.app-background {
 			max-width: none;
 		}
 	}
