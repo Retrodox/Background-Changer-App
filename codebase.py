@@ -4,7 +4,7 @@ import os
 files_to_collect = [
     "global.css", "index.html", "setupTypeScript.js",
     "app.svelte", "main.js", "preload.js",
-    "Topbar.svelte", "index.js"
+    "Topbar.svelte", "index.js", "FolderSelector.svelte"
 ]
 
 def find_files(directory, filenames, depth=2):

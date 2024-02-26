@@ -1,71 +1,132 @@
 html, body {
 	position: relative;
 }
-
-body {
-	color: #333;
-	margin: 0;
-	padding: 8px;
-	box-sizing: border-box;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+.app-background {
+    border-radius: 10px;
+    position: fixed; /* Position it relative to the viewport */
+    top: 16px; /* Stick it below the title bar */
+    left: 0; /* Stick it to the left */
+    right: 0; /* Stick it to the right */
+    bottom: 0; /* Stick it to the bottom */
+    text-align: center;
+    padding: 0; /* Set padding to 0 */
+    margin: 0; /* Set margin to 0 */
+    background-color: #C4E1F1; /* Updated Light blue background */
+    user-select: none; /* Prevent text selection */
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: flex-start; /* Align children to the top */
+    align-items: center; /* Center children horizontally */
+    box-sizing: border-box; /* Include padding in the width and height */
+    border: 5px solid #C4E1F1; /* Add border line with color #3949ab and size 1px */
+	border-top: none; /* Disable top border */
+    border-top-left-radius: 20px; /* Disable border radius on top left corner */
+    border-top-right-radius: 20px; /* Disable border radius on top right corner */
 }
 
-a {
-	color: rgb(0,100,200);
-	text-decoration: none;
+.title {
+	margin-bottom: 20px;
+	color: #3949ab; /* White text */
+	text-transform: uppercase;
+	font-size: 2.25em;
+	font-weight: bold; /* Bold text */
+	font-family: 'Roboto', sans-serif;
+	text-shadow: 1.5px 1.5px 2.75px #1a237e; /* Add text shadow */
 }
 
-a:hover {
-	text-decoration: underline;
-}
-
-a:visited {
-	color: rgb(0,80,160);
-}
-
-label {
-	display: block;
-}
-
-input, button, select, textarea {
-	font-family: inherit;
-	font-size: inherit;
-	-webkit-padding: 0.4em 0;
-	padding: 0.4em;
-	margin: 0 0 0.5em 0;
-	box-sizing: border-box;
-	border: 1px solid #ccc;
-	border-radius: 2px;
-}
-
-input:disabled {
-	color: #ccc;
+.line {
+	height: 5px;
+	width: 100%;
+	margin: 5px 0; /* Reduced space to 5px */
+	transition: background-color 0.5s ease;
 }
 
 button {
-	background-color: #F4F4F4; /* Light grey background */
-	color: #333; /* Dark grey text */
+	-webkit-app-region: no-drag;
+	margin: 0.5em;
+	padding: 0.5em 1em;
+	font-size: 1em;
 	border: none;
 	border-radius: 5px;
-	padding: 0.6em 1.2em;
-	font-size: 1em;
+	background-color: #3949ab; /* Indigo background */
+	color: #ffffff; /* Light Indigo text */
 	cursor: pointer;
 	transition: background-color 0.3s ease;
-	outline: none;
+	font-family: 'Roboto', sans-serif;
 }
 
 button:hover {
-	background-color: #E0E0E0; /* Darker grey on hover */
+	background-color: #1a237e; /* Dark Indigo on hover */
 }
 
-button:disabled {
-	color: #999;
+.folder-path {
+  font-family: 'Roboto', sans-serif;
+  font-size: .95em;
+  color: #3949ab; /* Missing semicolon added */
+  font-weight: bold;
+  user-select: text;
 }
 
-button:not(:disabled):active {
-	background-color: #BDBDBD; /* Even darker grey on active */
+.folder-selector-error-message {
+	font-family: 'Roboto', sans-serif;
+	font-size: .95em;
+	color: #3949ab; /* Missing semicolon added */
+	font-weight: bold;
+	text-shadow: .35px .35px 1px #1a237e;
+	user-select: text;
+  }
+
+.folder-name-selected {
+	font-family: 'Roboto', sans-serif;
+	font-size: .95em;
+	color: #3949ab;
+	font-weight: bold;
+	text-shadow: .35px .35px 1px #1a237e;
+	user-select: none;
+  }
+
+@media (min-width: 640px) {
+	.app-background {
+		max-width: none;
+	}
+}
+.scroll-container {
+    max-width: 250px;   /* Ensure the container does not exceed the parent width */
+    overflow-x: scroll;  /* Always show horizontal scrollbar */
+    overflow-y: hidden; /* Disable vertical scrolling */
+    white-space: nowrap; /* Prevent content from wrapping to ensure it stays in a single line */
+}
+.title-bar {
+    -webkit-app-region: drag;
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    height: 20px;
+    background-color: #3949ab; /* Indigo background */ /* Adjusted padding to make the bar smaller */
+    border-top-left-radius: 10px; /* Rounded border for the top left corner */
+    border-top-right-radius: 10px; /* Rounded border for the top right corner */
+    border: 5px solid #3949ab; /* Adjusted border to make it less fat */
 }
 
-button:focus {
-	border-color: #666;
+.button-container {
+    -webkit-app-region: no-drag;
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
 }
+
+.title-bar .minimize-btn, .close-btn {
+    -webkit-app-region: no-drag;
+  	background-color: transparent;
+  	border: none;
+  	color: #ffffff; /* White text */
+  	font-size: 0.8em; /* Reduce font size to make the buttons smaller */
+  	cursor: pointer;
+}
+.close-btn:hover {
+		background-color: #1a237e; /* Dark Indigo on hover */
+	}
+
+.minimize-btn:hover {
+		background-color: #1a237e; /* Dark Indigo on hover */
+	}

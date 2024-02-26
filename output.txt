@@ -1,8 +1,9 @@
 Title: index.js
 import { createRequire } from "module";
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import path from "path";
 import url from "url";
+import fs from "fs";
 
 // You don't need to import ipcMain again with require, it's already imported above
 // const { ipcMain } = require('electron'); <-- Remove this line
@@ -19,10 +20,10 @@ electronReload(path.join(__dirname, 'public'), {
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
     width: 300, // Set the initial width
-    height: 430, // Set the initial height
+    height: 450, // Set the initial height
     frame: false, // Remove the window frame
     transparent: true, // Make the window transparent
-    resizable: false, // Allow resizing
+    resizable: true, // Allow resizing
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -43,83 +44,114 @@ app.on("ready", () => {
       mainWindow.show();
     }
   });
-});
 
+  // Function to select folder and check if it's empty
+  function selectFolderAndCheckEmpty() {
+    dialog.showOpenDialog(mainWindow, {
+      properties: ['openDirectory']
+    }).then(result => {
+      if (!result.canceled && result.filePaths.length > 0) {
+        const folderPath = result.filePaths[0];
+        fs.readdir(folderPath, (err, files) => {
+          if (err) {
+            console.error('Error reading directory', err);
+            return;
+          }
+          if (files.length === 0) {
+            console.log('Folder Name Selected: Empty');
+            // Handle empty folder case
+          } else {
+            console.log(`Folder Name Selected: ${path.basename(folderPath)}`);
+            // Handle folder with files
+          }
+        });
+      }
+    }).catch(err => {
+      console.error('Error selecting folder', err);
+    });
+  }
+
+  // IPC listener for folder selection
+  ipcMain.on('select-folder', selectFolderAndCheckEmpty);
+});
 END OF CODE
 
 Title: global.css
 html, body {
 	position: relative;
 }
-
-body {
-	color: #333;
-	margin: 0;
-	padding: 8px;
-	box-sizing: border-box;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+.app-background {
+	border-radius: 10px;
+	position: fixed; /* Position it relative to the viewport */
+	top: 0; /* Stick it to the top */
+	left: 0; /* Stick it to the left */
+	right: 0; /* Stick it to the right */
+	bottom: 0; /* Stick it to the bottom */
+	text-align: center;
+	padding: 0; /* Set padding to 0 */
+	margin: 0; /* Set margin to 0 */
+	background-color:#C4E1F1;  /* Updated Light blue background */
+	user-select: none; /* Prevent text selection */
+	display: flex; /* Use flexbox layout */
+	flex-direction: column; /* Stack children vertically */
+	justify-content: flex-start; /* Align children to the top */
+	align-items: center; /* Center children horizontally */
+	box-sizing: border-box; /* Include padding in the width and height */
+	border: 5px solid #3949ab; /* Add border line with color #3949ab and size 1px */
 }
 
-a {
-	color: rgb(0,100,200);
-	text-decoration: none;
+.title {
+	margin-bottom: 20px;
+	color: #3949ab; /* White text */
+	text-transform: uppercase;
+	font-size: 2.25em;
+	font-weight: bold; /* Bold text */
+	font-family: 'Roboto', sans-serif;
+	text-shadow: 1.5px 1.5px 2.75px #1a237e; /* Add text shadow */
 }
 
-a:hover {
-	text-decoration: underline;
-}
-
-a:visited {
-	color: rgb(0,80,160);
-}
-
-label {
-	display: block;
-}
-
-input, button, select, textarea {
-	font-family: inherit;
-	font-size: inherit;
-	-webkit-padding: 0.4em 0;
-	padding: 0.4em;
-	margin: 0 0 0.5em 0;
-	box-sizing: border-box;
-	border: 1px solid #ccc;
-	border-radius: 2px;
-}
-
-input:disabled {
-	color: #ccc;
+.line {
+	height: 5px;
+	width: 100%;
+	margin: 5px 0; /* Reduced space to 5px */
+	transition: background-color 0.5s ease;
 }
 
 button {
-	background-color: #F4F4F4; /* Light grey background */
-	color: #333; /* Dark grey text */
+	-webkit-app-region: no-drag;
+	margin: 0.5em;
+	padding: 0.5em 1em;
+	font-size: 1em;
 	border: none;
 	border-radius: 5px;
-	padding: 0.6em 1.2em;
-	font-size: 1em;
+	background-color: #3949ab; /* Indigo background */
+	color: #ffffff; /* Light Indigo text */
 	cursor: pointer;
 	transition: background-color 0.3s ease;
-	outline: none;
+	font-family: 'Roboto', sans-serif;
 }
 
 button:hover {
-	background-color: #E0E0E0; /* Darker grey on hover */
+	background-color: #1a237e; /* Dark Indigo on hover */
 }
 
-button:disabled {
-	color: #999;
+.folder-path {
+  font-family: 'Roboto', sans-serif;
+  font-size: .75em;
+  font-weight: bold;
 }
 
-button:not(:disabled):active {
-	background-color: #BDBDBD; /* Even darker grey on active */
-}
+.folder-selector-error-message {
+	font-family: 'Roboto', sans-serif;
+	font-size: .75em;
+	font-weight: bold;
+  }
 
-button:focus {
-	border-color: #666;
+@media (min-width: 640px) {
+	.app-background {
+		max-width: none;
+	}
 }
-
 END OF CODE
 
 Title: index.html
@@ -280,6 +312,63 @@ if (fs.existsSync(path.join(projectRoot, "node_modules"))) {
   console.log("\nYou will need to re-run your dependency manager to get started.")
 }
 
+END OF CODE
+
+Title: FolderSelector.svelte
+<script>
+    export let onFolderSelect; // Accept a callback function as a prop
+  
+    let folderPath = '';
+    let errorMessage = ''; // A variable to hold an error message if no images are found
+  
+    function handleFolderSelection(event) {
+      const files = event.target.files;
+      if (files.length > 0) {
+        folderPath = files[0].webkitRelativePath.split('/')[0];
+        
+        let hasImageFiles = false;
+        let hasNonImageFiles = false;
+  
+        for (let file of files) {
+          const extension = file.name.split('.').pop().toLowerCase();
+          if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg'].includes(extension)) {
+            hasImageFiles = true;
+          } else {
+            hasNonImageFiles = true;
+          }
+  
+          if (hasImageFiles && hasNonImageFiles) break; // Both types of files found, no need to continue checking
+        }
+  
+        if (!hasImageFiles && !hasNonImageFiles) {
+          errorMessage = 'Empty'; // Folder is empty
+        } else if (hasImageFiles && !hasNonImageFiles) {
+          errorMessage = ''; // Valid folder with only image files
+        } else {
+          errorMessage = 'Invalid'; // Folder contains non-image files or is mixed
+        }
+      } else {
+        errorMessage = 'No folder was selected';
+      }
+    }
+
+    // Add a function to reset the input value
+    function resetInput() {
+      document.getElementById('folderSelector').value = '';
+    }
+  </script>
+  
+  <!-- Update the button's on:click to call resetInput -->
+  <button class="app-button" on:click={resetInput}>Select Pictures Folder</button>
+  <input type="file" id="folderSelector" webkitdirectory directory style="display: none;" on:change={handleFolderSelection} />
+  
+  {#if errorMessage === 'Empty' || errorMessage === 'Invalid'}
+    <p class="folder-path">Folder Name Selected: {errorMessage}</p>
+  {:else if folderPath}
+    <p class="folder-path">Folder Name Selected: "{folderPath}"</p>
+  {:else}
+    <p class="folder-path">Folder Name Selected: </p>
+  {/if}
 END OF CODE
 
 Title: main.js
